@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIVOS — ¿Cuánto sabés de lo que creés?</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060606;
+  --card: #0f0f0f;
+  --border: #1e1e1e;
+  --border2: #2a2a2a;
+  --accent: #C8F000;
+  --red: #FF3A2D;
+  --text: #F0EBE1;
+  --muted: #666;
+  --font-d: 'Bebas Neue', sans-serif;
+  --font-b: 'Manrope', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-b);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* DOT GRID */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, #1c1c1c 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* SCREENS */
+.screen {
+  display: none;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px;
+  position: relative;
+  z-index: 1;
+}
+.screen.active { display: flex; }
+
+/* ── INTRO ── */
+.intro-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 20px;
+  animation: fade-up 0.5s 0.1s both;
+}
+.intro-logo {
+  font-family: var(--font-d);
+  font-size: clamp(100px, 25vw, 180px);
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  line-height: 0.85;
+  text-align: center;
+  animation: pop-in 0.7s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.intro-line {
+  width: 1px;
+  height: 40px;
+  background: var(--border2);
+  margin: 24px auto;
+  animation: grow-line 0.5s 0.5s both;
+}
+.intro-tagline {
+  font-size: clamp(15px, 3.5vw, 19px);
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  max-width: 420px;
+  line-height: 1.5;
+  animation: fade-up 0.5s 0.6s both;
+}
+.intro-tagline em {
+  font-style: normal;
+  color: var(--accent);
+}
+.intro-meta {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 12px;
+  letter-spacing: 0.1em;
+  animation: fade-up 0.5s 0.7s both;
+}
+.btn-start {
+  margin-top: 40px;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 18px 64px;
+  font-family: var(--font-d);
+  font-size: 28px;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.12s;
+  animation: fade-up 0.5s 0.9s both;
+}
+.btn-start::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.15);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.btn-start:hover { transform: scale(1.03); }
+.btn-start:hover::after { opacity: 1; }
+.btn-start:active { transform: scale(0.97); }
+.intro-footer {
+  margin-top: 24px;
+  font-size: 12px;
+  color: #333;
+  text-align: center;
+  animation: fade-up 0.5s 1.1s both;
+}
+
+/* ── QUIZ ── */
+.quiz-top {
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 36px;
+}
+.q-logo {
+  font-family: var(--font-d);
+  font-size: 26px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+.progress-wrap {
+  flex: 1;
+  height: 2px;
+  background: var(--border2);
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+}
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.progress-label {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  flex-shrink: 0;
+}
+
+.q-card {
+  width: 100%;
+  max-width: 620px;
+  animation: slide-in 0.3s cubic-bezier(0.4,0,0.2,1) both;
+}
+.q-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: var(--accent);
+  color: #000;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.q-tag .q-num {
+  opacity: 0.5;
+  font-weight: 600;
+}
+.q-text {
+  font-size: clamp(17px, 3.8vw, 22px);
+  font-weight: 700;
+  line-height: 1.38;
+  margin-bottom: 28px;
+  padding-right: 40px;
+  position: relative;
+}
+.q-ghost-num {
+  position: absolute;
+  right: -8px;
+  top: -12px;
+  font-family: var(--font-d);
+  font-size: 96px;
+  color: var(--border2);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.choice-btn {
+  border: 1.5px solid var(--border2);
+  background: transparent;
+  color: var(--text);
+  padding: 15px 18px;
+  text-align: left;
+  font-family: var(--font-b);
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition: border-color 0.12s, background 0.12s;
+  position: relative;
+  overflow: hidden;
+}
+.choice-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(200,240,0,0.05);
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.choice-btn:hover { border-color: var(--accent); }
+.choice-btn:hover::before { opacity: 1; }
+.choice-btn.selected {
+  border-color: var(--accent);
+  background: rgba(200,240,0,0.08);
+}
+.choice-letter {
+  font-family: var(--font-d);
+  font-size: 20px;
+  color: var(--border2);
+  min-width: 18px;
+  line-height: 1.1;
+  transition: color 0.12s;
+}
+.choice-btn:hover .choice-letter,
+.choice-btn.selected .choice-letter {
+  color: var(--accent);
+}
+
+/* ── RESULTS ── */
+.results-inner {
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+.results-top {
+  text-align: center;
+}
+.r-logo {
+  font-family: var(--font-d);
+  font-size: 56px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+.r-sublabel {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.r-archetype {
+  margin-top: 14px;
+  font-family: var(--font-d);
+  font-size: 44px;
+  color: var(--text);
+  line-height: 1;
+}
+.r-archetype-desc {
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+#radarCanvas {
+  width: 100%;
+  max-width: 420px;
+}
+.axis-bars {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.ab-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ab-name {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  min-width: 90px;
+}
+.ab-track {
+  flex: 1;
+  height: 4px;
+  background: var(--border2);
+  overflow: hidden;
+}
+.ab-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+.ab-pct {
+  font-size: 12px;
+  font-weight: 800;
+  min-width: 34px;
+  text-align: right;
+}
+.results-cta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+.btn-share {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 15px 40px;
+  font-family: var(--font-d);
+  font-size: 24px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: transform 0.12s;
+  flex: 1;
+  min-width: 160px;
+}
+.btn-share:hover { transform: scale(1.03); }
+.btn-restart {
+  background: transparent;
+  color: var(--muted);
+  border: 1.5px solid var(--border2);
+  padding: 15px 28px;
+  font-family: var(--font-d);
+  font-size: 22px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.btn-restart:hover { border-color: var(--muted); color: var(--text); }
+
+/* SHARE OVERLAY */
+#shareOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 200;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 24px;
+}
+#shareOverlay.open { display: flex; }
+#shareCanvas {
+  max-width: min(480px, 90vw);
+  max-height: 60vh;
+  border: 1px solid var(--border2);
+  width: 100%;
+}
+.overlay-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.btn-dl {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 14px 36px;
+  font-family: var(--font-d);
+  font-size: 22px;
+  cursor: pointer;
+}
+.btn-close {
+  background: transparent;
+  color: var(--muted);
+  border: 1.5px solid var(--border2);
+  padding: 14px 24px;
+  font-family: var(--font-d);
+  font-size: 20px;
+  cursor: pointer;
+}
+.overlay-hint {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+/* ANIMATIONS */
+@keyframes pop-in {
+  from { opacity:0; transform: scale(0.8); }
+  to   { opacity:1; transform: scale(1); }
+}
+@keyframes fade-up {
+  from { opacity:0; transform: translateY(18px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+@keyframes grow-line {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+@keyframes slide-in {
+  from { opacity:0; transform: translateX(24px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+@keyframes slide-out {
+  from { opacity:1; transform: translateX(0); }
+  to   { opacity:0; transform: translateX(-24px); }
+}
+.exit { animation: slide-out 0.22s cubic-bezier(0.4,0,0.2,1) both !important; }
+</style>
+</head>
+<body>
+
+<!-- ═══ INTRO ═══ -->
+<div class="screen active" id="screen-intro">
+  <div class="intro-eyebrow">Agrupación juvenil · Test de ideas</div>
+  <div class="intro-logo">VIVOS</div>
+  <div class="intro-line"></div>
+  <p class="intro-tagline">
+    30 preguntas para saber exactamente<br>
+    dónde estás parado en los temas que<br>
+    <em>nadie quiere debatir</em>.
+  </p>
+  <p class="intro-meta">Sin trampa · Sin respuestas correctas · Solo vos y tus ideas</p>
+  <button class="btn-start" onclick="startQuiz()">EMPEZAR</button>
+  <p class="intro-footer">El resultado es tuyo. Y vale la pena compartirlo.</p>
+</div>
+
+<!-- ═══ QUIZ ═══ -->
+<div class="screen" id="screen-quiz">
+  <div class="quiz-top">
+    <div class="q-logo">VIVOS</div>
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progFill" style="width:0%"></div>
+    </div>
+    <div class="progress-label" id="progLabel">1 / 30</div>
+  </div>
+  <div class="q-card" id="qCard">
+    <!-- rendered by JS -->
+  </div>
+</div>
+
+<!-- ═══ RESULTS ═══ -->
+<div class="screen" id="screen-results">
+  <div class="results-inner">
+    <div class="results-top">
+      <div class="r-logo">VIVOS</div>
+      <div class="r-sublabel">Tu mapa de ideas</div>
+      <div class="r-archetype" id="rArchetype"></div>
+      <div class="r-archetype-desc" id="rDesc"></div>
+    </div>
+    <canvas id="radarCanvas" width="420" height="420"></canvas>
+    <div class="axis-bars" id="axisBars"></div>
+    <div class="results-cta">
+      <button class="btn-share" onclick="buildShareImage()">COMPARTIR</button>
+      <button class="btn-restart" onclick="restartQuiz()">REPETIR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SHARE OVERLAY ═══ -->
+<div id="shareOverlay">
+  <canvas id="shareCanvas" width="1080" height="1080"></canvas>
+  <div class="overlay-btns">
+    <button class="btn-dl" onclick="downloadShare()">DESCARGAR</button>
+    <button class="btn-close" onclick="closeShare()">CERRAR</button>
+  </div>
+  <p class="overlay-hint">Guardá la imagen y compartila donde quieras</p>
+</div>
+
+<script>
+const AXES  = ['VIDA','FAMILIA','ESTADO','BIOLOGÍA','NATALIDAD','LIBERTAD'];
+const COLORS = ['#C8F000','#FF3A2D','#00BFFF','#FF9500','#FF3DAA','#C8F000'];
+
+const ARCHETYPES = [
+  { max:50,  name:'EL BUSCADOR',    desc:'Todavía explorando. Eso también es una postura.' },
+  { max:75,  name:'EL COHERENTE',   desc:'Tus ideas tienen lógica interna. Solo falta profundizar.' },
+  { max:95,  name:'EL CONVENCIDO',  desc:'Sabés lo que creés. Y podés defenderlo.' },
+  { max:999, name:'EL GUARDIÁN',    desc:'Ves lo que otros no quieren ver. Bienvenido a VIVOS.' },
+];
+
+const questions = [
+  // ── VIDA (eje 0) ──
+  { ax:0, q:"Una mujer de 19 años queda embarazada accidentalmente. ¿Cuál debería ser la respuesta del Estado?",
+    c:["Garantizar su derecho a interrumpir el embarazo sin restricciones","Informarla de todas las opciones y apoyar económicamente si elige tener al hijo","No intervenir: es una decisión completamente personal","Proveer apoyo integral para que pueda elegir la maternidad con respaldo real"],
+    s:[1,3,2,4] },
+  { ax:0, q:"¿Desde qué momento considerás que un ser humano tiene derechos?",
+    c:["Desde el nacimiento","Desde que el feto es viable fuera del útero","Desde la concepción","Depende del contexto y la situación"],
+    s:[1,2,4,2] },
+  { ax:0, q:"Una persona dice 'la biología es clara: hay vida humana desde la concepción'. Otra dice 'la personería jurídica se adquiere al nacer'. ¿Cuál posición te parece más sólida?",
+    c:["La segunda: la personería jurídica se adquiere al nacer","La primera: la biología define cuándo empieza la vida","Ninguna es completa, es un debate filosófico abierto","Depende de la etapa del embarazo"],
+    s:[1,4,2,2] },
+  { ax:0, q:"Si el Estado financia clínicas donde se realizan abortos, ¿cómo lo ves?",
+    c:["Bien: es un servicio de salud como cualquier otro","Mal: el Estado no debería financiar la interrupción de vidas","Depende: solo podría aceptarlo en casos extremos","No tengo una posición clara"],
+    s:[1,4,3,2] },
+  { ax:0, q:"Una persona dice: 'El aborto es violencia, no un derecho'. ¿Cómo reaccionás?",
+    c:["Estoy de acuerdo, es una descripción precisa","Es una posición válida aunque no la comparto del todo","Me parece una exageración retórica","Es una posición que no merece lugar en el debate público"],
+    s:[4,3,2,1] },
+
+  // ── FAMILIA (eje 1) ──
+  { ax:1, q:"¿Qué rol debería tener la familia en la educación de los hijos?",
+    c:["Principal: los padres son los primeros educadores","Compartido con el Estado de manera equilibrada","El Estado debe garantizar educación uniforme independientemente de la familia","Importante, pero el Estado puede corregir valores familiares problemáticos"],
+    s:[4,2,1,1] },
+  { ax:1, q:"¿Qué pensás de los incentivos estatales para quienes tienen hijos?",
+    c:["Son necesarios: la familia numerosa beneficia a toda la sociedad","Pueden ser útiles pero no deben interferir en decisiones personales","Son innecesarios: tener hijos es una decisión completamente individual","Solo si están bien focalizados en sectores de bajos recursos"],
+    s:[4,3,1,2] },
+  { ax:1, q:"Una pareja decide no tener hijos por razones personales y ecológicas. ¿Cómo lo ves?",
+    c:["Es una decisión completamente válida y respetable","Es válida pero hay implicancias sociales que no siempre se consideran","Es preocupante desde el punto de vista demográfico","Cada uno elige, pero el argumento 'ecológico' me genera serias dudas"],
+    s:[1,3,4,3] },
+  { ax:1, q:"¿Qué estructura familiar te parece más favorable para el desarrollo de los niños?",
+    c:["Cualquier estructura con amor y estabilidad es igualmente válida","La evidencia muestra ventajas en familias biparentales estables","La familia con madre y padre ofrece el entorno más sólido","Depende del caso particular"],
+    s:[1,3,4,2] },
+  { ax:1, q:"El Estado debería tener políticas que favorezcan la formación de familias con hijos:",
+    c:["Sí, con beneficios concretos: créditos, exenciones impositivas, acceso a vivienda","Tal vez, pero sin discriminar a quienes no tienen hijos","No, el Estado no debe incentivar modelos de vida específicos","Solo si hay recursos fiscales suficientes"],
+    s:[4,2,1,3] },
+
+  // ── ESTADO (eje 2) ──
+  { ax:2, q:"¿Cuánto debería intervenir el Estado en la vida cotidiana de las personas?",
+    c:["Lo mínimo posible: las personas saben mejor lo que les conviene","Lo necesario para garantizar derechos básicos","Bastante: hay desigualdades que solo el Estado puede corregir","Mucho: debe garantizar bienestar integral en todos los ámbitos"],
+    s:[4,3,2,1] },
+  { ax:2, q:"Los contenidos que se enseñan en las escuelas públicas deberían:",
+    c:["Ser decididos principalmente por el Estado nacional","Incluir la participación activa de las familias","Ser determinados por cada comunidad educativa localmente","Reflejar los consensos científicos actuales sin restricciones de ningún tipo"],
+    s:[1,4,3,2] },
+  { ax:2, q:"¿Qué pensás del gasto público en Argentina?",
+    c:["Es excesivo y financia estructuras que perpetúan el clientelismo","Podría ser más eficiente pero hay servicios esenciales que debe proveer","Es necesario para sostener derechos sociales básicos","Debería expandirse para reducir las desigualdades estructurales"],
+    s:[4,3,2,1] },
+  { ax:2, q:"Una ONG recibe fondos del Estado para promover 'perspectiva de género' en escuelas primarias. ¿Cómo lo ves?",
+    c:["Bien: reduce discriminación y amplía derechos","Depende de los contenidos concretos que se trabajen","Mal: el Estado no debería financiar agendas ideológicas en escuelas","Es un tema que me genera dudas, no tengo posición clara"],
+    s:[1,2,4,2] },
+  { ax:2, q:"¿Cuál es para vos la diferencia entre un derecho y un privilegio?",
+    c:["Todo lo que el Estado garantiza se convierte en un derecho","Los derechos son universales; los privilegios requieren mérito individual","Es una distinción difícil de trazar en sociedades con alta desigualdad","Los derechos son básicos y universales; el resto depende de cada uno"],
+    s:[1,4,2,3] },
+
+  // ── BIOLOGÍA Y GÉNERO (eje 3) ──
+  { ax:3, q:"Las diferencias entre hombres y mujeres son principalmente:",
+    c:["Construcciones sociales y culturales sin base biológica relevante","Una combinación de biología y cultura, difícil de separar","Mayormente biológicas con cierta influencia cultural","Fundamentalmente biológicas: la cultura solo modifica la expresión"],
+    s:[1,2,3,4] },
+  { ax:3, q:"Un niño de 8 años dice que 'se siente niña'. ¿Qué debería hacer la escuela?",
+    c:["Respetar y afirmar su identidad de género de inmediato","Contener al niño sin reforzar ni negar su vivencia, e involucrar a la familia","Informar a los padres y dejar la decisión enteramente en manos de ellos","Derivar a un profesional de salud mental sin tomar posición institucional"],
+    s:[1,4,3,3] },
+  { ax:3, q:"La 'ideología de género' en las escuelas:",
+    c:["Es una herramienta necesaria para combatir discriminación y violencia","Tiene aspectos útiles pero también contenidos cuestionables","Introduce confusión en niños que están formando su identidad","Es una imposición ideológica que contradice la biología y desplaza a las familias"],
+    s:[1,2,3,4] },
+  { ax:3, q:"¿Cuántos géneros existen?",
+    c:["Son infinitos: el género es un espectro completamente personal","Hay diversidad de expresiones pero dos sexos biológicos bien definidos","Existen dos géneros, determinados por la biología","Es una pregunta compleja sin respuesta única o definitiva"],
+    s:[1,3,4,2] },
+  { ax:3, q:"Los espacios deportivos femeninos deberían organizarse según:",
+    c:["La identidad de género autopercibida de cada persona","El sexo biológico, con espacios específicos para casos particulares","El sexo biológico sin excepciones para garantizar equidad deportiva","Deberían ser espacios mixtos para todos sin distinción"],
+    s:[1,3,4,2] },
+
+  // ── NATALIDAD (eje 4) ──
+  { ax:4, q:"La caída de la tasa de natalidad en Argentina y el mundo occidental es:",
+    c:["Una tendencia natural y positiva: menos gente, más recursos por persona","Un tema menor que el mercado y la tecnología resolverán solos","Una señal preocupante con consecuencias económicas y sociales serias","Una crisis civilizatoria que requiere respuesta cultural y política urgente"],
+    s:[1,2,3,4] },
+  { ax:4, q:"¿Por qué cada vez menos jóvenes quieren tener hijos?",
+    c:["Porque priorizan su realización personal, y eso está perfectamente bien","Por razones económicas principalmente: vivienda, trabajo, ingresos","Por una combinación de economía y cambio cultural profundo","Porque el relato dominante desvaloriza la maternidad y la paternidad"],
+    s:[1,2,3,4] },
+  { ax:4, q:"Una campaña del Estado que celebra la maternidad y la paternidad joven te parece:",
+    c:["Conservadora e innecesaria: la gente ya sabe lo que quiere","Indiferente, cada uno elige cómo vivir","Bienvenida si está bien hecha y no presiona a nadie","Urgente y necesaria para revertir una tendencia preocupante"],
+    s:[1,2,3,4] },
+  { ax:4, q:"Países como Hungría dan incentivos masivos (créditos, exenciones) para que la gente tenga hijos. ¿Qué pensás?",
+    c:["Es una política retrógrada que presiona a las mujeres","Es interesante pero dudoso que realmente funcione","Es una política legítima con resultados mixtos que vale estudiar","Es un modelo que Argentina debería adoptar y adaptar"],
+    s:[1,2,3,4] },
+  { ax:4, q:"Si pudieras elegir libremente, ¿cuántos hijos te gustaría tener?",
+    c:["Ninguno o uno","Dos","Tres","Cuatro o más"],
+    s:[1,2,3,4] },
+
+  // ── LIBERTAD (eje 5) ──
+  { ax:5, q:"La libertad más importante es:",
+    c:["La libertad de identidad: vivir y expresarse como uno quiera","La libertad económica: trabajar, emprender y gastar sin restricciones","La libertad de expresión y pensamiento sin censura","La libertad de comunidad: asociarse y vivir según valores compartidos"],
+    s:[1,3,4,3] },
+  { ax:5, q:"Una universidad cancela una charla de un expositor conservador por presión de estudiantes. ¿Cómo lo ves?",
+    c:["Bien: hay discursos que hacen daño y no merecen plataforma","Depende de las ideas específicas en cuestión","Mal: la diversidad de ideas es esencial en una universidad","Es preocupante como señal cultural aunque entendible en ciertos casos"],
+    s:[1,2,4,3] },
+  { ax:5, q:"El 'lenguaje inclusivo' debería ser:",
+    c:["Adoptado y promovido activamente por el Estado e instituciones","Una opción personal sin imposición desde ninguna institución","Rechazado activamente porque deforma el idioma innecesariamente","Indiferente: no me parece un tema importante"],
+    s:[1,3,4,2] },
+  { ax:5, q:"Una persona que expresa públicamente que el aborto es un crimen debería:",
+    c:["Ser sancionada si sus palabras generan odio o incitan violencia","Poder expresarlo en ciertos ámbitos pero no en espacios públicos","Poder expresarlo libremente aunque muchos disientan","Tener el mismo derecho a expresarse que cualquier otra posición"],
+    s:[1,2,3,4] },
+  { ax:5, q:"¿Qué te parece más importante para una sociedad sana?",
+    c:["Que cada individuo pueda vivir como quiere sin que nadie lo juzgue","Que haya instituciones fuertes que garanticen derechos a todos","Un equilibrio entre libertad individual y valores comunes","Que existan valores compartidos que den cohesión y sentido a la comunidad"],
+    s:[1,2,3,4] },
+];
+
+// ── STATE ──
+let cur = 0;
+let answers = new Array(30).fill(null);
+let axScores = new Array(6).fill(0);
+
+// ── QUIZ LOGIC ──
+function startQuiz() {
+  show('screen-quiz');
+  renderQ(0);
+}
+
+function renderQ(idx) {
+  const q = questions[idx];
+  const letters = ['A','B','C','D'];
+
+  document.getElementById('progFill').style.width = (idx/30*100)+'%';
+  document.getElementById('progLabel').textContent = `${idx+1} / 30`;
+
+  const card = document.getElementById('qCard');
+  card.innerHTML = `
+    <div class="q-tag">
+      <span>${AXES[q.ax]}</span>
+      <span class="q-num">· ${String(idx+1).padStart(2,'0')}</span>
+    </div>
+    <div class="q-text">
+      <span class="q-ghost-num">${String(idx+1).padStart(2,'0')}</span>
+      ${q.q}
+    </div>
+    <div class="choices" id="choices"></div>
+  `;
+
+  const tag = card.querySelector('.q-tag');
+  tag.style.background = COLORS[q.ax];
+
+  const container = card.querySelector('#choices');
+  q.c.forEach((txt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn' + (answers[idx] === i ? ' selected' : '');
+    btn.innerHTML = `<span class="choice-letter">${letters[i]}</span><span>${txt}</span>`;
+    btn.onclick = () => pick(idx, i);
+    container.appendChild(btn);
+  });
+}
+
+function pick(qIdx, choiceIdx) {
+  answers[qIdx] = choiceIdx;
+  document.querySelectorAll('.choice-btn').forEach((el,i) => {
+    el.classList.toggle('selected', i === choiceIdx);
+  });
+
+  setTimeout(() => {
+    if (qIdx < 29) {
+      const card = document.getElementById('qCard');
+      card.classList.add('exit');
+      setTimeout(() => {
+        card.classList.remove('exit');
+        card.style.animation = 'none';
+        requestAnimationFrame(() => {
+          card.style.animation = '';
+          cur = qIdx + 1;
+          renderQ(cur);
+        });
+      }, 220);
+    } else {
+      showResults();
+    }
+  }, 360);
+}
+
+// ── RESULTS ──
+function showResults() {
+  axScores = new Array(6).fill(0);
+  questions.forEach((q,i) => {
+    if (answers[i] !== null) axScores[q.ax] += q.s[answers[i]];
+  });
+
+  show('screen-results');
+
+  const total = axScores.reduce((a,b) => a+b, 0);
+  const arch = ARCHETYPES.find(a => total <= a.max) || ARCHETYPES[3];
+  document.getElementById('rArchetype').textContent = arch.name;
+  document.getElementById('rDesc').textContent = arch.desc;
+
+  setTimeout(() => {
+    drawRadar(document.getElementById('radarCanvas'), 420, 420, 32);
+    renderBars();
+  }, 80);
+}
+
+function drawRadar(canvas, W, H, padding) {
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  const cx = W/2, cy = H/2;
+  const R = Math.min(W,H)/2 - padding - 20;
+  const n = 6;
+
+  // Grid rings
+  for (let ring = 1; ring <= 4; ring++) {
+    const r = R * ring/4;
+    ctx.beginPath();
+    for (let i=0;i<n;i++) {
+      const a = (i/n)*Math.PI*2 - Math.PI/2;
+      i===0 ? ctx.moveTo(cx+r*Math.cos(a), cy+r*Math.sin(a))
+             : ctx.lineTo(cx+r*Math.cos(a), cy+r*Math.sin(a));
+    }
+    ctx.closePath();
+    ctx.strokeStyle = ring===4 ? '#2a2a2a' : '#141414';
+    ctx.lineWidth = ring===4 ? 1.5 : 0.8;
+    ctx.stroke();
+  }
+
+  // Axis spokes
+  for (let i=0;i<n;i++) {
+    const a = (i/n)*Math.PI*2 - Math.PI/2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx+R*Math.cos(a), cy+R*Math.sin(a));
+    ctx.strokeStyle = '#1e1e1e';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Data fill
+  const maxS = 20;
+  const vals = axScores.map(s => s/maxS);
+
+  ctx.beginPath();
+  for (let i=0;i<n;i++) {
+    const a = (i/n)*Math.PI*2 - Math.PI/2;
+    const r = R*vals[i];
+    i===0 ? ctx.moveTo(cx+r*Math.cos(a), cy+r*Math.sin(a))
+           : ctx.lineTo(cx+r*Math.cos(a), cy+r*Math.sin(a));
+  }
+  ctx.closePath();
+  const grad = ctx.createRadialGradient(cx,cy,0,cx,cy,R);
+  grad.addColorStop(0,'rgba(200,240,0,0.25)');
+  grad.addColorStop(1,'rgba(200,240,0,0.05)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = '#C8F000';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Dots
+  for (let i=0;i<n;i++) {
+    const a = (i/n)*Math.PI*2 - Math.PI/2;
+    const r = R*vals[i];
+    ctx.beginPath();
+    ctx.arc(cx+r*Math.cos(a), cy+r*Math.sin(a), 4.5, 0, Math.PI*2);
+    ctx.fillStyle = '#C8F000';
+    ctx.fill();
+    ctx.strokeStyle = '#060606';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // Labels
+  const lR = R + 28;
+  for (let i=0;i<n;i++) {
+    const a = (i/n)*Math.PI*2 - Math.PI/2;
+    const lx = cx + lR*Math.cos(a);
+    const ly = cy + lR*Math.sin(a);
+    const pct = Math.round(vals[i]*100);
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '800 13px Manrope, sans-serif';
+    ctx.fillStyle = '#C8F000';
+    ctx.fillText(pct+'%', lx, ly - 9);
+
+    ctx.font = '700 8px Manrope, sans-serif';
+    ctx.fillStyle = '#666';
+    ctx.letterSpacing = '0.1em';
+    ctx.fillText(AXES[i], lx, ly + 7);
+  }
+}
+
+function renderBars() {
+  const wrap = document.getElementById('axisBars');
+  wrap.innerHTML = '';
+  const max = 20;
+  AXES.forEach((ax,i) => {
+    const pct = Math.round(axScores[i]/max*100);
+    const row = document.createElement('div');
+    row.className = 'ab-row';
+    row.innerHTML = `
+      <div class="ab-name">${ax}</div>
+      <div class="ab-track"><div class="ab-fill" style="background:${COLORS[i]}" data-w="${pct}"></div></div>
+      <div class="ab-pct" style="color:${COLORS[i]}">${pct}%</div>
+    `;
+    wrap.appendChild(row);
+  });
+  setTimeout(() => {
+    document.querySelectorAll('.ab-fill').forEach(el => el.style.width = el.dataset.w+'%');
+  }, 100);
+}
+
+// ── SHARE IMAGE ──
+function buildShareImage() {
+  const canvas = document.getElementById('shareCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = 1080, H = 1080;
+  canvas.width = W;
+  canvas.height = H;
+
+  // BG
+  ctx.fillStyle = '#060606';
+  ctx.fillRect(0,0,W,H);
+
+  // Dot grid
+  ctx.fillStyle = '#121212';
+  for (let x=27;x<W;x+=27) for (let y=27;y<H;y+=27) {
+    ctx.beginPath(); ctx.arc(x,y,1,0,Math.PI*2); ctx.fill();
+  }
+
+  // Top accent stripe
+  ctx.fillStyle = '#C8F000';
+  ctx.fillRect(0,0,W,6);
+
+  // VIVOS logo
+  ctx.font = 'bold 196px Bebas Neue, sans-serif';
+  ctx.fillStyle = '#C8F000';
+  ctx.textAlign = 'center';
+  ctx.fillText('VIVOS', W/2, 195);
+
+  // Tagline
+  ctx.font = '700 18px Manrope, sans-serif';
+  ctx.fillStyle = '#333';
+  ctx.fillText('MI MAPA DE IDEAS · vivos.ar', W/2, 232);
+
+  // Separator
+  ctx.strokeStyle = '#1e1e1e';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(80, 256); ctx.lineTo(W-80, 256); ctx.stroke();
+
+  // Archetype
+  const total = axScores.reduce((a,b)=>a+b,0);
+  const arch = ARCHETYPES.find(a=>total<=a.max)||ARCHETYPES[3];
+  ctx.font = 'bold 64px Bebas Neue, sans-serif';
+  ctx.fillStyle = '#F0EBE1';
+  ctx.fillText(arch.name, W/2, 320);
+  ctx.font = '500 20px Manrope, sans-serif';
+  ctx.fillStyle = '#555';
+  ctx.fillText(arch.desc, W/2, 354);
+
+  // Radar
+  const tmpC = document.createElement('canvas');
+  tmpC.width = 600; tmpC.height = 600;
+  const _savedScores = [...axScores];
+
+  // Draw radar directly on share canvas
+  const cx = W/2, cy = 650, R = 240, n = 6;
+  const max = 20;
+  const vals = axScores.map(s=>s/max);
+
+  // Grid
+  for (let ring=1;ring<=4;ring++) {
+    const r = R*ring/4;
+    ctx.beginPath();
+    for (let i=0;i<n;i++) {
+      const a=(i/n)*Math.PI*2-Math.PI/2;
+      i===0?ctx.moveTo(cx+r*Math.cos(a),cy+r*Math.sin(a)):ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));
+    }
+    ctx.closePath();
+    ctx.strokeStyle = ring===4?'#2a2a2a':'#111';
+    ctx.lineWidth = ring===4?2:1;
+    ctx.stroke();
+  }
+
+  // Spokes
+  for (let i=0;i<n;i++) {
+    const a=(i/n)*Math.PI*2-Math.PI/2;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));
+    ctx.strokeStyle='#1a1a1a'; ctx.lineWidth=1; ctx.stroke();
+  }
+
+  // Data
+  ctx.beginPath();
+  for (let i=0;i<n;i++) {
+    const a=(i/n)*Math.PI*2-Math.PI/2;
+    const r=R*vals[i];
+    i===0?ctx.moveTo(cx+r*Math.cos(a),cy+r*Math.sin(a)):ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));
+  }
+  ctx.closePath();
+  const g=ctx.createRadialGradient(cx,cy,0,cx,cy,R);
+  g.addColorStop(0,'rgba(200,240,0,0.22)'); g.addColorStop(1,'rgba(200,240,0,0.04)');
+  ctx.fillStyle=g; ctx.fill();
+  ctx.strokeStyle='#C8F000'; ctx.lineWidth=3; ctx.stroke();
+
+  // Dots + labels
+  const lR = R+55;
+  for (let i=0;i<n;i++) {
+    const a=(i/n)*Math.PI*2-Math.PI/2;
+    const r=R*vals[i];
+    ctx.beginPath(); ctx.arc(cx+r*Math.cos(a),cy+r*Math.sin(a),7,0,Math.PI*2);
+    ctx.fillStyle='#C8F000'; ctx.fill();
+    ctx.strokeStyle='#060606'; ctx.lineWidth=2; ctx.stroke();
+
+    const lx=cx+lR*Math.cos(a), ly=cy+lR*Math.sin(a);
+    const pct=Math.round(vals[i]*100);
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.font='800 22px Manrope,sans-serif'; ctx.fillStyle='#C8F000';
+    ctx.fillText(pct+'%', lx, ly-12);
+    ctx.font='700 13px Manrope,sans-serif'; ctx.fillStyle='#555';
+    ctx.fillText(AXES[i], lx, ly+10);
+  }
+
+  // Bottom bar
+  ctx.fillStyle='#0a0a0a';
+  ctx.fillRect(0,1010,W,70);
+  ctx.font='500 16px Manrope,sans-serif';
+  ctx.fillStyle='#333'; ctx.textAlign='center';
+  ctx.fillText('Hacé el test en vivos.ar', W/2, 1050);
+
+  document.getElementById('shareOverlay').classList.add('open');
+}
+
+function downloadShare() {
+  const c = document.getElementById('shareCanvas');
+  const a = document.createElement('a');
+  a.download = 'VIVOS-mi-mapa.png';
+  a.href = c.toDataURL('image/png');
+  a.click();
+}
+
+function closeShare() {
+  document.getElementById('shareOverlay').classList.remove('open');
+}
+
+function restartQuiz() {
+  cur = 0;
+  answers = new Array(30).fill(null);
+  axScores = new Array(6).fill(0);
+  show('screen-intro');
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
